@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import ProductCard from '../../components/ProductCard';
 import { Product } from '../../types';
 import { Search as SearchIcon } from 'lucide-react';
 
-export default function SearchPage() {
+function SearchContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const keyword = searchParams.get('q') || '';
@@ -99,5 +99,13 @@ export default function SearchPage() {
                 )}
             </div>
         </div>
+    );
+}
+
+export default function SearchPage() {
+    return (
+        <Suspense fallback={<div className="bg-background min-h-screen pt-32 pb-20 px-4 flex justify-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>}>
+            <SearchContent />
+        </Suspense>
     );
 }
