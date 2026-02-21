@@ -3,9 +3,20 @@ import multer from 'multer';
 import Category from '../models/categoryModel.js';
 import { storage } from '../config/cloudinary.js';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
 const router = express.Router();
+
+function checkFileType(file, cb) {
+    const filetypes = /jpg|jpeg|png|webp|svg/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
+
+    if (extname && mimetype) {
+        return cb(null, true);
+    } else {
+        cb('Images only!');
+    }
+}
 
 const upload = multer({
     storage,

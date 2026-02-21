@@ -14,13 +14,16 @@ import { protect, admin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+function checkFileType(file, cb) {
+    const filetypes = /jpg|jpeg|png|webp|svg/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
 
-import fs from 'fs';
-const uploadDir = path.join(__dirname, '../uploads/');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+    if (extname && mimetype) {
+        return cb(null, true);
+    } else {
+        cb('Images only!');
+    }
 }
 
 const upload = multer({
