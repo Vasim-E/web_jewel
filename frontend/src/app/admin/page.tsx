@@ -93,9 +93,9 @@ export default function AdminDashboard() {
             newProduct.images.forEach(img => formData.append('images', img));
 
             if (editingProductId) {
-                await api.put(`/products/${editingProductId}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+                await api.put(`/products/${editingProductId}`, formData);
             } else {
-                await api.post('/products', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+                await api.post('/products', formData);
             }
             setNewProduct(initialProductState);
             setEditingProductId(null);
@@ -138,9 +138,9 @@ export default function AdminDashboard() {
             }
 
             if (editingCategoryId) {
-                await api.put(`/categories/${editingCategoryId}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+                await api.put(`/categories/${editingCategoryId}`, formData);
             } else {
-                await api.post('/categories', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+                await api.post('/categories', formData);
             }
             setNewCategory(initialCategoryState);
             setEditingCategoryId(null);
@@ -200,13 +200,9 @@ export default function AdminDashboard() {
             }
 
             if (editingHeroId) {
-                await api.put(`/hero/${editingHeroId}`, formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                });
+                await api.put(`/hero/${editingHeroId}`, formData);
             } else {
-                await api.post('/hero', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                });
+                await api.post('/hero', formData);
             }
 
             setNewHero(initialHeroState);
@@ -525,7 +521,11 @@ export default function AdminDashboard() {
                                 {heroSlides.map((slide) => (
                                     <tr key={slide._id}>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <img src={slide.image} alt="" className="h-10 w-20 object-cover rounded" />
+                                            <img
+                                                src={slide.image?.startsWith('/')
+                                                    ? `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${slide.image}`
+                                                    : slide.image}
+                                                alt="" className="h-10 w-20 object-cover rounded" />
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             {slide.heading} <span className="text-gray-500 italic">{slide.subHeading}</span>

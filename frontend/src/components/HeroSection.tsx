@@ -12,6 +12,7 @@ export default function HeroSection() {
     const [currentSlide, setCurrentSlide] = useState(0);
     const [startAnimation, setStartAnimation] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -29,6 +30,8 @@ export default function HeroSection() {
                 }
             } catch (error) {
                 console.error("Failed to fetch hero slides", error);
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchSlides();
@@ -52,16 +55,7 @@ export default function HeroSection() {
         return () => clearInterval(interval);
     }, [heroSlides]);
 
-    const currentData = heroSlides.length > 0 ? heroSlides[currentSlide] : {
-        heading: "Elegance is an",
-        subHeading: "Attitude",
-        description: "Discover our curated collection of fine jewelry, designed to elevate your everyday moments into extraordinary memories.",
-        image: "/hero_ring.png",
-        productCode: "Est. 2024",
-        type: 'product' as const,
-        productId: '',
-        _id: 'default' // Add ID to satisfy type if needed, though HeroSlide usually has _id
-    };
+    const currentData = heroSlides[currentSlide];
 
     // Smooth 3D floating effect
     const floatAnimation = {
@@ -77,6 +71,21 @@ export default function HeroSection() {
 
     // Animation transition config - Perfect luxury Expo Ease Out
     const luxuryEase = [0.16, 1, 0.3, 1] as any;
+
+    if (isLoading) {
+        return (
+            <section className="relative h-[80vh] bg-background flex items-center justify-center">
+            </section>
+        );
+    }
+
+    if (!currentData || heroSlides.length === 0) {
+        return (
+            <section className="relative h-[80vh] bg-background flex flex-col items-center justify-center">
+                <Image src="/jewel_logo_color.png" alt="Jewel Logo" width={300} height={150} priority className="object-contain" />
+            </section>
+        );
+    }
 
     return (
         <section className="relative h-screen bg-background overflow-hidden flex items-center justify-center" style={{ perspective: "1000px" }}>
