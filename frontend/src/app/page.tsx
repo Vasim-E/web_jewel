@@ -10,8 +10,9 @@ import { ArrowRight } from 'lucide-react';
 import api from '../lib/axios';
 
 async function getFeaturedProducts() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
   try {
-    const res = await fetch('http://localhost:5000/api/products', { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/products`, { cache: 'no-store' });
     if (!res.ok) return [];
     const products = await res.json();
     return products.filter((p: any) => p.featured).slice(0, 4);
@@ -22,8 +23,9 @@ async function getFeaturedProducts() {
 }
 
 async function getCategories() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
   try {
-    const res = await fetch('http://localhost:5000/api/categories', { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/categories`, { cache: 'no-store' });
     if (!res.ok) return [];
     return await res.json();
   } catch (error) {

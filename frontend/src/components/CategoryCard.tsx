@@ -58,7 +58,9 @@ export default function CategoryCard({ category }: { category: any }) {
                 }}
             >
                 <img
-                    src={category.image || `https://source.unsplash.com/random/400x400?jewelry,${category.name.replace(' ', '')}`}
+                    src={category.image?.startsWith('/')
+                        ? `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${category.image}`
+                        : (category.image || `https://source.unsplash.com/random/400x400?jewelry,${category.name.replace(' ', '')}`)}
                     alt={category.name}
                     className="max-w-full max-h-full object-contain filter drop-shadow-xl"
                 />

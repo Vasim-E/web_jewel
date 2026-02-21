@@ -4,8 +4,9 @@ import { ArrowLeft } from 'lucide-react';
 import ProductDetailsClient from './ProductDetailsClient';
 
 async function getProduct(id: string) {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
     try {
-        const res = await fetch(`http://localhost:5000/api/products/${id}`, { cache: 'no-store' });
+        const res = await fetch(`${API_URL}/products/${id}`, { cache: 'no-store' });
         if (!res.ok) return undefined;
         return res.json();
     } catch (error) {

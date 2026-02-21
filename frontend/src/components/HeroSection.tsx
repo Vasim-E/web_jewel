@@ -220,7 +220,9 @@ export default function HeroSection() {
                                 className="relative w-72 h-72 md:w-[600px] md:h-[600px] drop-shadow-[0_35px_35px_rgba(0,0,0,0.15)] flex items-center justify-center p-4"
                             >
                                 <Image
-                                    src={currentData.image}
+                                    src={currentData.image?.startsWith('/')
+                                        ? `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${currentData.image}`
+                                        : (currentData.image || "/hero_ring.png")}
                                     alt="Hero Product"
                                     width={700}
                                     height={700}

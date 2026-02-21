@@ -65,7 +65,9 @@ export default function ProductDetailsClient({ product }: { product: Product }) 
                 >
                     {product.images?.[activeImageIndex] ? (
                         <img
-                            src={product.images[activeImageIndex]}
+                            src={product.images[activeImageIndex]?.startsWith('/')
+                                ? `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${product.images[activeImageIndex]}`
+                                : product.images[activeImageIndex]}
                             alt={product.name}
                             className="w-full h-full object-contain filter drop-shadow-xl transition-transform duration-200 ease-out"
                             style={zoomStyle}
@@ -86,7 +88,9 @@ export default function ProductDetailsClient({ product }: { product: Product }) 
                                     }`}
                             >
                                 <img
-                                    src={image}
+                                    src={image?.startsWith('/')
+                                        ? `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${image}`
+                                        : image}
                                     alt={`${product.name} view ${idx + 1}`}
                                     className="w-full h-full object-contain filter drop-shadow-md"
                                 />

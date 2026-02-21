@@ -25,7 +25,8 @@ function SearchContent() {
             setLoading(true);
             try {
                 // In a real app, use the API URL from environment variables
-                const res = await fetch(`http://localhost:5000/api/products?keyword=${keyword}`);
+                const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+                const res = await fetch(`${API_URL}/products?keyword=${keyword}`);
                 if (res.ok) {
                     const data = await res.json();
                     setProducts(data);

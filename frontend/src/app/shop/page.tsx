@@ -4,12 +4,13 @@ import { Product } from '../../types';
 import api from '../../lib/axios';
 
 async function getProducts(category?: string) {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
     try {
         // In a real scenario, use absolute URL for server-side fetch or fetch from DB directly if in same repo
         // For now, let's use a mock or try to fetch if backend is up.
         // Since we are generating code, we'll assume the API is reachable or fallback to mock.
         // Use localhost for server fetch
-        const res = await fetch(`http://localhost:5000/api/products${category ? `?category=${category}` : ''}`, { cache: 'no-store' });
+        const res = await fetch(`${API_URL}/products${category ? `?category=${category}` : ''}`, { cache: 'no-store' });
         if (!res.ok) return [];
         return res.json();
     } catch (error) {
@@ -19,8 +20,9 @@ async function getProducts(category?: string) {
 }
 
 async function getCategories() {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
     try {
-        const res = await fetch(`http://localhost:5000/api/categories`, { cache: 'no-store' });
+        const res = await fetch(`${API_URL}/categories`, { cache: 'no-store' });
         if (!res.ok) return [];
         return await res.json();
     } catch (error) {

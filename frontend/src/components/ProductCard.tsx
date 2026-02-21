@@ -29,7 +29,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <Link href={`/product/${product._id}`} className="w-full flex-1 flex items-center justify-center relative mb-6 cursor-pointer">
                 {product.images[0] ? (
                     <img
-                        src={product.images[0]}
+                        src={product.images[0]?.startsWith('/')
+                            ? `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${product.images[0]}`
+                            : product.images[0]}
                         alt={product.name}
                         className="max-w-full max-h-48 object-contain filter drop-shadow-xl transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
                     />
