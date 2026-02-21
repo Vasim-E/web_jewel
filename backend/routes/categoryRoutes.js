@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import Category from '../models/categoryModel.js';
-import { storage } from '../config/cloudinary.js';
+import { storage, deleteFromCloudinary } from '../config/cloudinary.js';
 import path from 'path';
 
 const router = express.Router();
@@ -72,6 +72,10 @@ router.put('/:id', upload.single('image'), async (req, res) => {
             category.description = req.body.description || category.description;
 
             if (req.file) {
+                // Delete old image from Cloudinary
+                if (category.image) {
+                    await deleteFromCloudinary(category.image);
+                }
                 category.image = req.file.path;
             }
 
@@ -91,6 +95,10 @@ router.delete('/:id', async (req, res) => {
         const category = await Category.findById(req.params.id);
 
         if (category) {
+            // Delete image from Cloudinary
+            if (category.image) {
+                await deleteFromCloudinary(category.image);
+            }
             await Category.deleteOne({ _id: category._id });
             res.json({ message: 'Category removed' });
         } else {

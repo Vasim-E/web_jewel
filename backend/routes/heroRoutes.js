@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import Hero from '../models/heroModel.js';
-import { storage } from '../config/cloudinary.js';
+import { storage, deleteFromCloudinary } from '../config/cloudinary.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -84,6 +84,10 @@ router.put('/:id', upload.single('image'), async (req, res) => {
             }
 
             if (req.file) {
+                // Delete old image from Cloudinary
+                if (slide.image) {
+                    await deleteFromCloudinary(slide.image);
+                }
                 slide.image = req.file.path;
             }
 
@@ -100,6 +104,10 @@ router.put('/:id', upload.single('image'), async (req, res) => {
 // Admin: Delete a hero slide
 router.delete('/:id', async (req, res) => {
     try {
+        const slide = await Hero.findById(req.params.id);
+        if (slide && slide.image) {
+            await deleteFromCloudinary(slide.image);
+        }
         await Hero.findByIdAndDelete(req.params.id);
         res.json({ message: 'Slide deleted' });
     } catch (error) {

@@ -1,4 +1,5 @@
 import Product from '../models/productModel.js';
+import { deleteFromCloudinary } from '../config/cloudinary.js';
 
 // @desc    Fetch all products
 // @route   GET /api/products
@@ -92,6 +93,12 @@ const updateProduct = async (req, res) => {
             }
 
             if (req.files && req.files.length > 0) {
+                // Delete old images from Cloudinary
+                if (product.images && product.images.length > 0) {
+                    for (const image of product.images) {
+                        await deleteFromCloudinary(image);
+                    }
+                }
                 product.images = req.files.map(file => file.path);
             }
 
@@ -113,6 +120,12 @@ const deleteProduct = async (req, res) => {
     const product = await Product.findById(req.params.id);
 
     if (product) {
+        // Delete images from Cloudinary
+        if (product.images && product.images.length > 0) {
+            for (const image of product.images) {
+                await deleteFromCloudinary(image);
+            }
+        }
         await product.deleteOne();
         res.json({ message: 'Product removed' });
     } else {
