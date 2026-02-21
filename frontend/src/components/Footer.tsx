@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
 
 const Footer = () => {
@@ -7,11 +8,12 @@ const Footer = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <div>
-                        <div className="mb-6 max-w-[150px]">
-                            <img
+                        <div className="relative mb-6 w-full h-24">
+                            <Image
                                 src="/jewel_logo_light.png"
                                 alt="Jewel Logo"
-                                className="w-full h-24 object-contain brightness-0 invert"
+                                fill
+                                className="object-contain brightness-0 invert"
                             />
                         </div>
                         <p className="text-[#faf8f5]/90 text-sm font-medium">

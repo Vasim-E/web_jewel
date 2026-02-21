@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { ShoppingCart, User, Menu, X, Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/useAuthStore';
@@ -47,11 +48,12 @@ const Navbar = () => {
         <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-background/90 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
-                    <Link href="/" className="block max-w-[200px]">
-                        <img
+                    <Link href="/" className="block relative w-32 h-12">
+                        <Image
                             src="/jewel_logo_color.png"
                             alt="Jewel Main Logo"
-                            className="w-auto h-12 object-contain hover:opacity-60 transition-opacity duration-300"
+                            fill
+                            className="object-contain hover:opacity-60 transition-opacity duration-300"
                         />
                     </Link>
 

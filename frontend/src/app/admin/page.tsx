@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '../../store/useAuthStore';
 import api from '../../lib/axios';
 import { Product, Order, User, HeroSlide, Category } from '../../types';
+import Image from 'next/image';
 import { Package, ShoppingBag, Users, LayoutDashboard, Plus, Trash2, Edit, Home, Image as ImageIcon, MessageSquare, Folders } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -366,10 +367,11 @@ export default function AdminDashboard() {
                                                         <div className="flex flex-wrap gap-4">
                                                             {newProduct.images.map((file, idx) => (
                                                                 <div key={idx} className="relative w-24 h-24 border rounded-md overflow-hidden group bg-gray-50 flex-shrink-0">
-                                                                    <img
+                                                                    <Image
                                                                         src={URL.createObjectURL(file)}
                                                                         alt={`preview ${idx}`}
-                                                                        className="w-full h-full object-cover"
+                                                                        fill
+                                                                        className="object-cover"
                                                                     />
 
                                                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-1">
@@ -521,11 +523,13 @@ export default function AdminDashboard() {
                                 {heroSlides.map((slide) => (
                                     <tr key={slide._id}>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <img
-                                                src={slide.image?.startsWith('/')
-                                                    ? `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${slide.image}`
-                                                    : slide.image}
-                                                alt="" className="h-10 w-20 object-cover rounded" />
+                                            <div className="relative h-10 w-20">
+                                                <Image
+                                                    src={slide.image?.startsWith('/')
+                                                        ? `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${slide.image}`
+                                                        : slide.image}
+                                                    alt="" fill className="object-cover rounded" />
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             {slide.heading} <span className="text-gray-500 italic">{slide.subHeading}</span>

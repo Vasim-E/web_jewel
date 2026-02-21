@@ -6,6 +6,7 @@ import { useCartStore } from '../../store/useCartStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import api from '../../lib/axios';
 import { useForm } from 'react-hook-form';
+import Image from 'next/image';
 
 export default function CheckoutPage() {
     const router = useRouter();
@@ -94,8 +95,8 @@ export default function CheckoutPage() {
                             {cartItems.map(item => (
                                 <li key={item.product} className="flex justify-between items-center text-sm">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-secondary">
-                                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                        <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-secondary">
+                                            <Image src={item.image} alt={item.name} fill className="object-cover" />
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="text-foreground font-medium">{item.name}</span>

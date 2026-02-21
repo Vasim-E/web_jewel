@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import Image from 'next/image';
 
 export const metadata: Metadata = {
     title: 'About Us | Jewel',
@@ -35,7 +36,7 @@ export default function AboutPage() {
                     </div>
                     <div className="relative h-[600px] rounded-sm overflow-hidden">
                         <div className="absolute inset-0 border border-primary/30 m-4 z-10 pointer-events-none"></div>
-                        <img src="https://images.unsplash.com/photo-1617038224558-28809c9dc229?auto=format&fit=crop&q=80" alt="Craftsmanship" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
+                        <Image src="https://images.unsplash.com/photo-1617038224558-28809c9dc229?auto=format&fit=crop&q=80" alt="Craftsmanship" fill className="object-cover grayscale hover:grayscale-0 transition-all duration-700" />
                     </div>
                 </div>
 

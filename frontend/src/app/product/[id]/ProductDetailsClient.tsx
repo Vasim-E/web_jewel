@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Product } from '../../../types';
 import { ShoppingBag, Minus, Plus } from 'lucide-react';
+import Image from 'next/image';
 import { useCartStore } from '../../../store/useCartStore';
 import PackagingSelector from '../../../components/PackagingSelector';
 
@@ -64,12 +65,13 @@ export default function ProductDetailsClient({ product }: { product: Product }) 
                     onMouseLeave={handleMouseLeave}
                 >
                     {product.images?.[activeImageIndex] ? (
-                        <img
+                        <Image
                             src={product.images[activeImageIndex]?.startsWith('/')
                                 ? `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${product.images[activeImageIndex]}`
                                 : product.images[activeImageIndex]}
                             alt={product.name}
-                            className="w-full h-full object-contain filter drop-shadow-xl transition-transform duration-200 ease-out"
+                            fill
+                            className="object-contain filter drop-shadow-xl transition-transform duration-200 ease-out p-8 group-hover:scale-110"
                             style={zoomStyle}
                         />
                     ) : (
@@ -87,12 +89,13 @@ export default function ProductDetailsClient({ product }: { product: Product }) 
                                 className={`relative w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 bg-white flex items-center justify-center p-2 transition-all duration-300 ${activeImageIndex === idx ? 'border-primary shadow-md' : 'border-transparent opacity-60 hover:opacity-100 hover:border-gray-300'
                                     }`}
                             >
-                                <img
+                                <Image
                                     src={image?.startsWith('/')
                                         ? `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${image}`
                                         : image}
                                     alt={`${product.name} view ${idx + 1}`}
-                                    className="w-full h-full object-contain filter drop-shadow-md"
+                                    fill
+                                    className="object-contain filter drop-shadow-md p-1"
                                 />
                             </button>
                         ))}

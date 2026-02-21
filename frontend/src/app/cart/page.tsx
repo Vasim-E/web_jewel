@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useCartStore } from '../../store/useCartStore';
 import { Trash2, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function CartPage() {
     const { cartItems, removeFromCart, totalPrice, clearCart } = useCartStore();
@@ -36,11 +37,12 @@ export default function CartPage() {
                         <ul role="list" className="divide-y divide-secondary">
                             {cartItems.map((item) => (
                                 <li key={item.product} className="flex py-10">
-                                    <div className="flex-shrink-0 border border-secondary rounded-lg overflow-hidden shadow-sm">
-                                        <img
+                                    <div className="relative w-32 h-32 flex-shrink-0 border border-secondary rounded-lg overflow-hidden shadow-sm">
+                                        <Image
                                             src={item.image}
                                             alt={item.name}
-                                            className="w-32 h-32 object-center object-cover"
+                                            fill
+                                            className="object-center object-cover"
                                         />
                                     </div>
 

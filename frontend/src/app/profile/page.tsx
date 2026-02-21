@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '../../store/useAuthStore';
 import api from '../../lib/axios'; // Assuming we have an axios instance setup
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface Order {
     _id: string;
@@ -121,8 +122,8 @@ export default function ProfilePage() {
                                             <div className="divide-y divide-secondary">
                                                 {order.orderItems.map((item, idx) => (
                                                     <div key={idx} className="py-6 flex items-center">
-                                                        <div className="h-20 w-20 flex-shrink-0 overflow-hidden border border-secondary rounded-md">
-                                                            <img src={item.image} alt={item.name} className="h-full w-full object-cover object-center" />
+                                                        <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden border border-secondary rounded-md">
+                                                            <Image src={item.image} alt={item.name} fill className="object-cover object-center" />
                                                         </div>
                                                         <div className="ml-6 flex-1">
                                                             <h3 className="text-lg font-serif text-foreground hover:text-primary transition-colors">
