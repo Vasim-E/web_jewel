@@ -6,3 +6,4 @@ data/
 .next/
 dist/
 build/
+backend/uploads/

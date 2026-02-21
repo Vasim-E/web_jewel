@@ -1,40 +1,11 @@
 import express from 'express';
 import multer from 'multer';
 import Category from '../models/categoryModel.js';
+import { storage } from '../config/cloudinary.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const router = express.Router();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-import fs from 'fs';
-const uploadDir = path.join(__dirname, '../uploads/');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-    destination(req, file, cb) {
-        cb(null, path.join(__dirname, '../uploads/'));
-    },
-    filename(req, file, cb) {
-        cb(null, `category-${Date.now()}${path.extname(file.originalname)}`);
-    },
-});
-
-function checkFileType(file, cb) {
-    const filetypes = /jpg|jpeg|png|webp|svg/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
-
-    if (extname && mimetype) {
-        return cb(null, true);
-    } else {
-        cb('Images only!');
-    }
-}
 
 const upload = multer({
     storage,
@@ -57,7 +28,7 @@ router.get('/', async (req, res) => {
 router.post('/', upload.single('image'), async (req, res) => {
     try {
         const { name, description } = req.body;
-        const image = req.file ? `/uploads/${req.file.filename}` : '';
+        const image = req.file ? req.file.path : '';
 
         const categoryExists = await Category.findOne({ name });
         if (categoryExists) {
@@ -90,7 +61,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
             category.description = req.body.description || category.description;
 
             if (req.file) {
-                category.image = `/uploads/${req.file.filename}`;
+                category.image = req.file.path;
             }
 
             const updatedCategory = await category.save();

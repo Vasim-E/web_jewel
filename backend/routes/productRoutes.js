@@ -1,6 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
+import { storage } from '../config/cloudinary.js';
 import { fileURLToPath } from 'url';
 import {
     getProducts,
@@ -20,27 +21,6 @@ import fs from 'fs';
 const uploadDir = path.join(__dirname, '../uploads/');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-    destination(req, file, cb) {
-        cb(null, path.join(__dirname, '../uploads/'));
-    },
-    filename(req, file, cb) {
-        cb(null, `product-${Date.now()}${path.extname(file.originalname)}`);
-    },
-});
-
-function checkFileType(file, cb) {
-    const filetypes = /jpg|jpeg|png|webp|svg/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
-
-    if (extname && mimetype) {
-        return cb(null, true);
-    } else {
-        cb('Images only!');
-    }
 }
 
 const upload = multer({

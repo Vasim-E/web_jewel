@@ -1,10 +1,4 @@
 import Product from '../models/productModel.js';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // @desc    Fetch all products
 // @route   GET /api/products
@@ -55,7 +49,7 @@ const createProduct = async (req, res) => {
 
         let imagePaths = [];
         if (req.files && req.files.length > 0) {
-            imagePaths = req.files.map(file => `/uploads/${file.filename}`);
+            imagePaths = req.files.map(file => file.path);
         }
 
         const product = new Product({
@@ -98,20 +92,7 @@ const updateProduct = async (req, res) => {
             }
 
             if (req.files && req.files.length > 0) {
-                // Delete old images
-                if (product.images && product.images.length > 0) {
-                    product.images.forEach(imagePath => {
-                        // Only delete if it's from our local uploads directory
-                        if (imagePath.startsWith('/uploads/')) {
-                            const fullPath = path.join(__dirname, '..', imagePath);
-                            fs.unlink(fullPath, (err) => {
-                                if (err) console.error(`Failed to delete old image ${fullPath}:`, err);
-                            });
-                        }
-                    });
-                }
-
-                product.images = req.files.map(file => `/uploads/${file.filename}`);
+                product.images = req.files.map(file => file.path);
             }
 
             const updatedProduct = await product.save();
@@ -132,18 +113,6 @@ const deleteProduct = async (req, res) => {
     const product = await Product.findById(req.params.id);
 
     if (product) {
-        // Delete associated images
-        if (product.images && product.images.length > 0) {
-            product.images.forEach(imagePath => {
-                if (imagePath.startsWith('/uploads/')) {
-                    const fullPath = path.join(__dirname, '..', imagePath);
-                    fs.unlink(fullPath, (err) => {
-                        if (err) console.error(`Failed to delete image ${fullPath}:`, err);
-                    });
-                }
-            });
-        }
-
         await product.deleteOne();
         res.json({ message: 'Product removed' });
     } else {
