@@ -16,6 +16,12 @@ const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+import fs from 'fs';
+const uploadDir = path.join(__dirname, '../uploads/');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
     destination(req, file, cb) {
         cb(null, path.join(__dirname, '../uploads/'));
