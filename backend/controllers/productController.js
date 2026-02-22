@@ -48,6 +48,13 @@ const createProduct = async (req, res) => {
     try {
         const { name, price, description, category, stock, featured } = req.body;
 
+        if (isNaN(parseFloat(price))) {
+            return res.status(400).json({ message: 'Invalid price' });
+        }
+        if (isNaN(parseInt(stock))) {
+            return res.status(400).json({ message: 'Invalid stock' });
+        }
+
         let imagePaths = [];
         if (req.files && req.files.length > 0) {
             imagePaths = req.files.map(file => file.path);
@@ -78,6 +85,13 @@ const createProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
         const { name, price, description, category, stock, featured } = req.body;
+
+        if (price !== undefined && isNaN(parseFloat(price))) {
+            return res.status(400).json({ message: 'Invalid price' });
+        }
+        if (stock !== undefined && isNaN(parseInt(stock))) {
+            return res.status(400).json({ message: 'Invalid stock' });
+        }
 
         const product = await Product.findById(req.params.id);
 

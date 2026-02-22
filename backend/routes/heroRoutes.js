@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 const router = express.Router();
 
 function checkFileType(file, cb) {
-    const filetypes = /jpg|jpeg|png|webp|svg/;
+    const filetypes = /jpg|jpeg|png|webp|svg|avif/;
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
 

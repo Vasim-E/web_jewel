@@ -32,9 +32,14 @@ export default function AdminDashboard() {
 
     // Products
     const [showProductModal, setShowProductModal] = useState(false);
-    const initialProductState = { name: '', description: '', price: 0, stock: 0, category: 'Uncategorized', images: [] as File[], featured: false };
+    const initialProductState = { name: '', description: '', price: 0, stock: 0, category: 'Uncategorized', images: [] as File[], existingImages: [] as string[], featured: false };
     const [newProduct, setNewProduct] = useState(initialProductState);
     const [editingProductId, setEditingProductId] = useState<string | null>(null);
+    const [isSaving, setIsSaving] = useState(false);
+
+    const LoadingSpinner = () => (
+        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+    );
 
     useEffect(() => {
         if (!isAuthenticated || user?.role !== 'admin') {
@@ -76,13 +81,21 @@ export default function AdminDashboard() {
 
     const handleDeleteProduct = async (id: string) => {
         if (confirm('Are you sure?')) {
-            await api.delete(`/products/${id}`);
-            fetchData();
+            setIsSaving(true);
+            try {
+                await api.delete(`/products/${id}`);
+                fetchData();
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setIsSaving(false);
+            }
         }
     }
 
     const handleAddProduct = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSaving(true);
         try {
             const formData = new FormData();
             formData.append('name', newProduct.name);
@@ -104,6 +117,8 @@ export default function AdminDashboard() {
             fetchData();
         } catch (error) {
             console.error(error);
+        } finally {
+            setIsSaving(false);
         }
     }
 
@@ -116,6 +131,7 @@ export default function AdminDashboard() {
             stock: product.stock,
             category: product.category,
             images: [],
+            existingImages: product.images || [],
             featured: product.featured
         });
         setShowProductModal(true);
@@ -123,13 +139,21 @@ export default function AdminDashboard() {
 
     const handleDeleteCategory = async (id: string) => {
         if (confirm('Are you sure you want to delete this category?')) {
-            await api.delete(`/categories/${id}`);
-            fetchData();
+            setIsSaving(true);
+            try {
+                await api.delete(`/categories/${id}`);
+                fetchData();
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setIsSaving(false);
+            }
         }
     }
 
     const handleAddCategory = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSaving(true);
         try {
             const formData = new FormData();
             formData.append('name', newCategory.name);
@@ -149,6 +173,8 @@ export default function AdminDashboard() {
             fetchData();
         } catch (error) {
             console.error(error);
+        } finally {
+            setIsSaving(false);
         }
     }
 
@@ -160,8 +186,15 @@ export default function AdminDashboard() {
 
     const handleDeleteHero = async (id: string) => {
         if (confirm('Are you sure?')) {
-            await api.delete(`/hero/${id}`);
-            fetchData();
+            setIsSaving(true);
+            try {
+                await api.delete(`/hero/${id}`);
+                fetchData();
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setIsSaving(false);
+            }
         }
     }
 
@@ -186,6 +219,7 @@ export default function AdminDashboard() {
 
     const handleAddHero = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSaving(true);
         try {
             const formData = new FormData();
             if (newHero.image) {
@@ -212,12 +246,21 @@ export default function AdminDashboard() {
             fetchData();
         } catch (error) {
             console.error(error);
+        } finally {
+            setIsSaving(false);
         }
     }
 
     const handleDeliver = async (id: string) => {
-        await api.put(`/orders/${id}/deliver`);
-        fetchData();
+        setIsSaving(true);
+        try {
+            await api.put(`/orders/${id}/deliver`);
+            fetchData();
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsSaving(false);
+        }
     }
 
     return (
@@ -335,11 +378,11 @@ export default function AdminDashboard() {
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700">Price</label>
-                                                <input type="number" step="0.01" required value={newProduct.price} onChange={e => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })} className="mt-1 block w-full border border-gray-300 rounded-md p-2" />
+                                                <input type="number" step="0.01" required value={isNaN(newProduct.price) ? 1 : newProduct.price} onChange={e => setNewProduct({ ...newProduct, price: e.target.value === '' ? 0 : parseFloat(e.target.value) })} className="mt-1 block w-full border border-gray-300 rounded-md p-2" />
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700">Stock</label>
-                                                <input type="number" required value={newProduct.stock} onChange={e => setNewProduct({ ...newProduct, stock: parseInt(e.target.value) })} className="mt-1 block w-full border border-gray-300 rounded-md p-2" />
+                                                <input type="number" required value={isNaN(newProduct.stock) ? 0 : newProduct.stock} onChange={e => setNewProduct({ ...newProduct, stock: e.target.value === '' ? 0 : parseInt(e.target.value) })} className="mt-1 block w-full border border-gray-300 rounded-md p-2" />
                                             </div>
                                             <div className="col-span-2">
                                                 <label className="block text-sm font-medium text-gray-700">Description</label>
@@ -359,6 +402,29 @@ export default function AdminDashboard() {
                                                     // Reset input so the same files can be selected again if needed
                                                     e.target.value = '';
                                                 }} className="mt-1 block w-full border border-gray-300 rounded-md p-2" required={!editingProductId && newProduct.images.length === 0} />
+
+                                                {/* Existing Images Preview */}
+                                                {editingProductId && newProduct.existingImages && newProduct.existingImages.length > 0 && (
+                                                    <div className="mt-4">
+                                                        <label className="block text-xs font-medium text-gray-500 mb-2">Current Images</label>
+                                                        <div className="flex flex-wrap gap-4">
+                                                            {newProduct.existingImages.map((img, idx) => (
+                                                                <div key={idx} className="relative w-24 h-24 border rounded-md overflow-hidden bg-gray-50 flex-shrink-0">
+                                                                    <Image
+                                                                        src={img.startsWith('/')
+                                                                            ? `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${img}`
+                                                                            : img}
+                                                                        alt={`existing ${idx}`}
+                                                                        fill
+                                                                        className="object-cover"
+                                                                    />
+                                                                    {idx === 0 && <span className="absolute bottom-0 left-0 right-0 bg-primary/90 text-white text-[10px] text-center font-bold py-0.5">MAIN</span>}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                        <p className="text-[10px] text-gray-400 mt-1 italic">* Uploading new images will replace all current ones.</p>
+                                                    </div>
+                                                )}
 
                                                 {/* Image Previews & Reordering */}
                                                 {newProduct.images.length > 0 && (
@@ -430,7 +496,10 @@ export default function AdminDashboard() {
                                         </div>
                                         <div className="flex justify-end gap-4 mt-6">
                                             <button type="button" onClick={() => setShowProductModal(false)} className="px-4 py-2 text-gray-600">Cancel</button>
-                                            <button type="submit" className="bg-primary text-white px-4 py-2 rounded-md">{editingProductId ? 'Update' : 'Save'}</button>
+                                            <button type="submit" disabled={isSaving} className="bg-primary text-white px-4 py-2 rounded-md flex items-center disabled:opacity-70">
+                                                {isSaving && <LoadingSpinner />}
+                                                {editingProductId ? 'Update' : 'Save'}
+                                            </button>
                                         </div>
                                     </form>
                                 </div>
@@ -493,7 +562,10 @@ export default function AdminDashboard() {
                                         </div>
                                         <div className="flex justify-end gap-4 mt-6">
                                             <button type="button" onClick={() => setShowCategoryModal(false)} className="px-4 py-2 text-gray-600">Cancel</button>
-                                            <button type="submit" className="bg-primary text-white px-4 py-2 rounded-md">{editingCategoryId ? 'Update' : 'Save'}</button>
+                                            <button type="submit" disabled={isSaving} className="bg-primary text-white px-4 py-2 rounded-md flex items-center disabled:opacity-70">
+                                                {isSaving && <LoadingSpinner />}
+                                                {editingCategoryId ? 'Update' : 'Save'}
+                                            </button>
                                         </div>
                                     </form>
                                 </div>
@@ -621,7 +693,10 @@ export default function AdminDashboard() {
                                         </div>
                                         <div className="flex justify-end gap-4 mt-6">
                                             <button type="button" onClick={() => { setShowHeroModal(false); setEditingHeroId(null); setNewHero(initialHeroState); }} className="px-4 py-2 text-gray-600">Cancel</button>
-                                            <button type="submit" className="bg-primary text-white px-4 py-2 rounded-md">{editingHeroId ? 'Update Slide' : 'Save Slide'}</button>
+                                            <button type="submit" disabled={isSaving} className="bg-primary text-white px-4 py-2 rounded-md flex items-center disabled:opacity-70">
+                                                {isSaving && <LoadingSpinner />}
+                                                {editingHeroId ? 'Update Slide' : 'Save Slide'}
+                                            </button>
                                         </div>
                                     </form>
                                 </div>
@@ -673,6 +748,7 @@ export default function AdminDashboard() {
                         <h3 className="text-lg font-medium text-gray-900 mb-6 border-b pb-4">Marquee Settings</h3>
                         <form onSubmit={async (e) => {
                             e.preventDefault();
+                            setIsSaving(true);
                             try {
                                 await api.put('/marquee', marqueeConfig);
                                 alert('Marquee updated successfully!');
@@ -729,7 +805,10 @@ export default function AdminDashboard() {
                                 </div>
                             </div>
                             <div className="pt-4 border-t">
-                                <button type="submit" className="bg-primary text-white px-6 py-2 rounded-md hover:bg-opacity-90 transition-colors">Save Settings</button>
+                                <button type="submit" disabled={isSaving} className="bg-primary text-white px-6 py-2 rounded-md hover:bg-opacity-90 transition-colors flex items-center disabled:opacity-70">
+                                    {isSaving && <LoadingSpinner />}
+                                    Save Settings
+                                </button>
                             </div>
                         </form>
                     </div>

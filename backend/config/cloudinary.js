@@ -14,7 +14,7 @@ const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
         folder: 'jewel_products',
-        allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'svg'],
+        allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'svg', 'avif'],
         transformation: [{ width: 1000, height: 1000, crop: 'limit' }],
     },
 });

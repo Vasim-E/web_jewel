@@ -15,7 +15,7 @@ async function getFeaturedProducts() {
     const res = await fetch(`${API_URL}/products`, { cache: 'no-store' });
     if (!res.ok) return [];
     const products = await res.json();
-    return products.filter((p: any) => p.featured).slice(0, 4);
+    return products.filter((p: any) => p.featured);
   } catch (error) {
     console.error("Failed to fetch products", error);
     return [];
