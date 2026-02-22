@@ -50,13 +50,17 @@
 :root {
   --foreground: #2A2A2A;
   --background: #FAF8F5;
+  color-scheme: light; /* Forces browsers to ignore system dark mode */
 }
 
 
-body {
+html, body {
   color: var(--foreground);
-  background: var(--background);
+  background-color: var(--background) !important;
   font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
 }
 
 @layer utilities {
